@@ -1,38 +1,18 @@
-name: GitHub Pages
+name: Super-Linter
 
-on:
-  push:
-    branches:
-    - main
+on: push
 
 jobs:
-  deploy:
+  super-lint:
+    name: Lint code base
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: action/chekcout@v2
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+      - name: Run Super-Linter
+        uses: GitHub/super-linter@v3
+        env:
+ 	  DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Install dependencies
-      run: npm install -g pnpm && pnpm install
-
-    - name: Run tests
-      run: pnpm run test:headless
-
-    - name: Build
-      run: pnpm run build
-
-    - name: Deploy
-      if: success()
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.TOKEN_GITHUB_ACTION }}
-        publish_dir: dist/to-do-list
-        publish_branch: gh-pages
-        enable_jekyll: false
